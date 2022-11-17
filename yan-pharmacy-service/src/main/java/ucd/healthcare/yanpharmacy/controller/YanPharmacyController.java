@@ -32,13 +32,13 @@ public class YanPharmacyController {
         return new ResponseEntity<>(service.getAllMedicines(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/m/names")
-    public ResponseEntity<List<Medicine>> getAllMedicinesByNames(@RequestBody List<String> names) {
-        service.print();
-        return new ResponseEntity<>(service.getMedicinesByNames(names), HttpStatus.OK);
-    }
+    // @RequestMapping(method = RequestMethod.POST, value = "/m/names")
+    // public ResponseEntity<List<Medicine>> getAllMedicinesByNames(@RequestBody List<String> names) {
+    //     service.print();
+    //     return new ResponseEntity<>(service.getMedicinesByNames(names), HttpStatus.OK);
+    // }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/m/name/${name}")
+    @RequestMapping(method = RequestMethod.GET, value = "/m/name/{name}")
     public ResponseEntity<Medicine> getAllMedicinesByName(@PathVariable("name") String name) {
         service.print();
         return new ResponseEntity<>(service.getMedicinesByName(name), HttpStatus.OK);

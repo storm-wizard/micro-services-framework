@@ -42,10 +42,10 @@ public class YanPharmacyService {
         }
     }
 
-    public List<Medicine> getMedicinesByNames(List<String> names) {
-        List<Medicine> medicines = repository.findByNames(names);
-        return medicines.size() > 0 ? medicines : new ArrayList<Medicine>();
-    }
+    // public List<Medicine> getMedicinesByNames(List<String> names) {
+    //     List<Medicine> medicines = repository.findByNames(names);
+    //     return medicines.size() > 0 ? medicines : new ArrayList<Medicine>();
+    // }
 
     public Medicine getMedicinesByName(String name) {
         Optional<Medicine> medicine = repository.findByName(name);
