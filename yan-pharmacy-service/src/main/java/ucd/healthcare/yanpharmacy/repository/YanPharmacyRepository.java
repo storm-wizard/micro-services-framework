@@ -14,6 +14,6 @@ import ucd.healthcare.yanpharmacy.model.Medicine;
 public interface YanPharmacyRepository extends JpaRepository<Medicine, Integer> {
     Optional<Medicine> findByName(String name);
 
-    @Query("select * from medicine where name in (:names)")
+    @Query("select m from medicine as m where m.name in (:names)")
     List<Medicine> findByNames(@Param("names") List<String> names);
 }

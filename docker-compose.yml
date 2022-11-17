@@ -18,10 +18,10 @@ services:
         aliases:
           - "mysql-server"
     healthcheck:
-      test:  "mysql -uuser -puserpwd -e \"use tyy;desc medicine;\""
-      interval: 2s
-      timeout: 5s
-      retries: 3
+      test:  "mysql -h localhost -P 3306 -uuser -puserpwd -e \"use tyy; desc medicine;\""
+      interval: 1s
+      timeout: 3s
+      retries: 30
       start_period: 1m
 
   eureka-service-1:
@@ -37,6 +37,9 @@ services:
       tyy:
         aliases:
           - "eureka-server-1"
+    depends_on:
+      database:
+        condition: service_healthy
 
   eureka-service-2:
     build: ./eureka-service
@@ -51,6 +54,9 @@ services:
       tyy:
         aliases:
           - "eureka-server-2"
+    depends_on:
+      database:
+        condition: service_healthy
 
   eureka-service-3:
     build: ./eureka-service
@@ -65,6 +71,9 @@ services:
       tyy:
         aliases:
           - "eureka-server-3"
+    depends_on:
+      database:
+        condition: service_healthy
 
   gateway-service:
     build: ./gateway-service
@@ -78,14 +87,19 @@ services:
         aliases:
           - "gateway-server"
     depends_on:
-      - eureka-service-1
-      - eureka-service-2
-      - eureka-service-3
+      database:
+        condition: service_healthy
+      eureka-service-1:
+        condition: service_started
+      eureka-service-2:
+        condition: service_started
+      eureka-service-3:
+        condition: service_started
 
   yan-pharmacy-service-1:
     build: ./yan-pharmacy-service
     environment:
-      MYSQL_SERVER_URI: "mysql-server:3307"
+      MYSQL_SERVER_URI: "mysql-server:3306"
       EUREKA_SERVER_URI: "http://eureka-server-1:9001/eureka,http://eureka-server-2:9002/eureka,http://eureka-server-3:9003/eureka"
       CONTAINER_NUMBER: "ONE"
     ports:
@@ -104,7 +118,7 @@ services:
   yan-pharmacy-service-2:
     build: ./yan-pharmacy-service
     environment:
-      MYSQL_SERVER_URI: "mysql-server:3307"
+      MYSQL_SERVER_URI: "mysql-server:3306"
       EUREKA_SERVER_URI: "http://eureka-server-1:9001/eureka,http://eureka-server-2:9002/eureka,http://eureka-server-3:9003/eureka"
       CONTAINER_NUMBER: "TWO"
     ports:
