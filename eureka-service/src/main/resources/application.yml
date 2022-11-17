@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: eureka-service-cluster
+  cloud:
+    config:
+      import-check:
+        enabled: false
+  config:
+    activate:
+      on-profile: eureka-server-1
+
+server:
+  port: 9001
+
+eureka:
+  instance:
+    hostname: eureka-server-1
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_URI_1}/eureka/,http://${EUREKA_SERVER_URI_2}/eureka/
+  server:
+    enable-self-preservation: false
+
+
+---
+
+spring:
+  application:
+    name: eureka-service-cluster
+  cloud:
+    config:
+      import-check:
+        enabled: false
+  config:
+    activate:
+      on-profile: eureka-server-2
+
+server:
+  port: 9002
+
+eureka:
+  instance:
+    hostname: eureka-server-2
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_URI_1}/eureka/,http://${EUREKA_SERVER_URI_2}/eureka/
+  server:
+    enable-self-preservation: false
+
+---
+
+spring:
+  application:
+    name: eureka-service-cluster
+  cloud:
+    config:
+      import-check:
+        enabled: false
+  config:
+    activate:
+      on-profile: eureka-server-3
+
+server:
+  port: 9003
+
+eureka:
+  instance:
+    hostname: eureka-server-3
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_URI_1}/eureka/,http://${EUREKA_SERVER_URI_2}/eureka/
+  server:
+    enable-self-preservation: false

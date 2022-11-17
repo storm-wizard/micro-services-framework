@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: yan-pharmacy-service
+  cloud:
+    config:
+      import-check:
+        enabled: false
+#    config:
+#      uri: http://configservice:8071
+    loadbalancer:
+      ribbon:
+        enabled: false
+  datasource:
+    url: jdbc:mysql://${MYSQL_SERVER_URI}/tyy
+    username: user
+    password: userpwd
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8081
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URI}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    enabled-by-default: true
+

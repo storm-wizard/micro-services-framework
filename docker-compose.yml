@@ -1,0 +1,114 @@
+version: '3'
+services:
+  database:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: "tyy"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "userpwd"
+      MYSQL_ROOT_PASSWORD: "rootpwd"
+    ports:
+      - published: 3306
+        target: 3306
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
+    networks:
+      tyy:
+        aliases:
+          - "mysql-server"
+  eureka-service-1:
+    build: ./eureka-service
+    environment:
+      EUREKA_SERVER_URI_1: "eureka-server-2:9002"
+      EUREKA_SERVER_URI_2: "eureka-server-3:9003"
+      SPRING_PROFILES_ACTIVE: "eureka-server-1"
+    ports:
+      - published: 9001
+        target: 9001
+    networks:
+      tyy:
+        aliases:
+          - "eureka-server-1"
+  eureka-service-2:
+    build: ./eureka-service
+    environment:
+      EUREKA_SERVER_URI_1: "eureka-server-1:9001"
+      EUREKA_SERVER_URI_2: "eureka-server-3:9003"
+      SPRING_PROFILES_ACTIVE: "eureka-server-2"
+    ports:
+      - published: 9002
+        target: 9002
+    networks:
+      tyy:
+        aliases:
+          - "eureka-server-2"
+  eureka-service-3:
+    build: ./eureka-service
+    environment:
+      EUREKA_SERVER_URI_1: "eureka-server-1:9001"
+      EUREKA_SERVER_URI_2: "eureka-server-2:9002"
+      SPRING_PROFILES_ACTIVE: "eureka-server-3"
+    ports:
+      - published: 9003
+        target: 9003
+    networks:
+      tyy:
+        aliases:
+          - "eureka-server-3"
+  gateway-service:
+    build: ./gateway-service
+    environment:
+      EUREKA_SERVER_URI: "http://eureka-server-1:9001/eureka,http://eureka-server-2:9002/eureka,http://eureka-server-3:9003/eureka"
+    ports:
+      - published: 8072
+        target: 8072
+    networks:
+      tyy:
+        aliases:
+          - "gateway-server"
+    depends_on:
+      - eureka-service-1
+      - eureka-service-2
+      - eureka-service-3
+  yan-pharmacy-service-1:
+    build: ./yan-pharmacy-service
+    environment:
+      MYSQL_SERVER_URI: "mysql-server:3306"
+      EUREKA_SERVER_URI: "http://eureka-server-1:9001/eureka,http://eureka-server-2:9002/eureka,http://eureka-server-3:9003/eureka"
+      CONTAINER_NUMBER: "ONE"
+    ports:
+      - published: 8081
+        target: 8081
+    networks:
+      tyy:
+        aliases:
+          - "yan-pharmacy-server-1"
+    depends_on:
+      - eureka-service-1
+      - eureka-service-2
+      - eureka-service-3
+      - gateway-service
+  yan-pharmacy-service-2:
+    build: ./yan-pharmacy-service
+    environment:
+      MYSQL_SERVER_URI: "mysql-server:3306"
+      EUREKA_SERVER_URI: "http://eureka-server-1:9001/eureka,http://eureka-server-2:9002/eureka,http://eureka-server-3:9003/eureka"
+      CONTAINER_NUMBER: "TWO"
+    ports:
+      - published: 8082
+        target: 8081
+    networks:
+      tyy:
+        aliases:
+          - "yan-pharmacy-server-2"
+    depends_on:
+      - eureka-service-1
+      - eureka-service-2
+      - eureka-service-3
+      - gateway-service
+
+networks:
+  # td - yue - yan hhhh
+  tyy:
+    driver: bridge

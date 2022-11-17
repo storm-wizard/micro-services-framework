@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    config:
+      import-check:
+        enabled: false
+    loadbalancer:
+      ribbon:
+        enabled: false
+    gateway:
+      routes:
+      - id: yan-pharmacy-service
+        uri: lb://yan-pharmacy-service
+        predicates:
+          - Path=/yan/**
+        filters:
+          - RewritePath=/yan/(?<path>.*), /$\{path}
+#    config:
+#      uri: http://configserver:8071
+
+logging:
+  level:
+    com.netflix: WARN
+    org.springframework.web: WARN
+    com.optimagrowth: DEBUG
+
+server:
+  port: 8072
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URI}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

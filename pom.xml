@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ucd.healthcare</groupId>
+    <version>1.0</version>
+    <artifactId>teamwork</artifactId>
+    <packaging>pom</packaging>
+    <name>UCD Residence Healthcare</name>
+    <description>UCD Residence Healthcare - TD, Yue, Yan balabala</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.5</version>
+        <relativePath />
+    </parent>
+
+    <properties>
+        <docker.image.prefix>tyy</docker.image.prefix>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <modules>
+        <!-- <module>config-service</module> -->
+        <module>eureka-service</module>
+        <module>gateway-service</module>
+        <module>yan-pharmacy-service</module>
+        <!--
+        <module>user-service</module>
+        <module>docker-service</module>
+        <module>devi-pharmacy-service</module>
+        <module>yue-pharmacy-service</module> -->
+    </modules>
+</project>
