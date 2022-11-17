@@ -9,7 +9,7 @@ services:
       MYSQL_PASSWORD: "userpwd"
       MYSQL_ROOT_PASSWORD: "rootpwd"
     ports:
-      - published: 3306
+      - published: 3307
         target: 3306
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
@@ -17,6 +17,13 @@ services:
       tyy:
         aliases:
           - "mysql-server"
+    healthcheck:
+      test:  "mysql -uuser -puserpwd -e \"use tyy;desc medicine;\""
+      interval: 2s
+      timeout: 5s
+      retries: 3
+      start_period: 1m
+
   eureka-service-1:
     build: ./eureka-service
     environment:
@@ -30,6 +37,7 @@ services:
       tyy:
         aliases:
           - "eureka-server-1"
+
   eureka-service-2:
     build: ./eureka-service
     environment:
@@ -43,6 +51,7 @@ services:
       tyy:
         aliases:
           - "eureka-server-2"
+
   eureka-service-3:
     build: ./eureka-service
     environment:
@@ -56,6 +65,7 @@ services:
       tyy:
         aliases:
           - "eureka-server-3"
+
   gateway-service:
     build: ./gateway-service
     environment:
@@ -71,10 +81,11 @@ services:
       - eureka-service-1
       - eureka-service-2
       - eureka-service-3
+
   yan-pharmacy-service-1:
     build: ./yan-pharmacy-service
     environment:
-      MYSQL_SERVER_URI: "mysql-server:3306"
+      MYSQL_SERVER_URI: "mysql-server:3307"
       EUREKA_SERVER_URI: "http://eureka-server-1:9001/eureka,http://eureka-server-2:9002/eureka,http://eureka-server-3:9003/eureka"
       CONTAINER_NUMBER: "ONE"
     ports:
@@ -85,14 +96,15 @@ services:
         aliases:
           - "yan-pharmacy-server-1"
     depends_on:
-      - eureka-service-1
-      - eureka-service-2
-      - eureka-service-3
-      - gateway-service
+      gateway-service:
+        condition: service_started
+      database:
+        condition: service_healthy
+
   yan-pharmacy-service-2:
     build: ./yan-pharmacy-service
     environment:
-      MYSQL_SERVER_URI: "mysql-server:3306"
+      MYSQL_SERVER_URI: "mysql-server:3307"
       EUREKA_SERVER_URI: "http://eureka-server-1:9001/eureka,http://eureka-server-2:9002/eureka,http://eureka-server-3:9003/eureka"
       CONTAINER_NUMBER: "TWO"
     ports:
@@ -103,10 +115,10 @@ services:
         aliases:
           - "yan-pharmacy-server-2"
     depends_on:
-      - eureka-service-1
-      - eureka-service-2
-      - eureka-service-3
-      - gateway-service
+      gateway-service:
+        condition: service_started
+      database:
+        condition: service_healthy
 
 networks:
   # td - yue - yan hhhh
